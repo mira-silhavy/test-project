@@ -1,6 +1,8 @@
-package com.incredible.types;
+package com.incredible.types.enums;
 
-/** Template JavaDoc for EItemOrdering */
+/**
+ * Enum representing items sorting.
+ */
 public enum EItemOrdering {
 
     NATURAL,

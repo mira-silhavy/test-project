@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.incredible.types.EItemOrdering;
+import com.incredible.types.enums.EItemOrdering;
 import com.incredible.types.Item;
 import com.incredible.types.Pack;
 
-/** Template JavaDoc for PackFactory */
+/**
+ * Pack factory and items processor.
+ */
 public class PackFactory {
 
     private final EItemOrdering order;
@@ -34,7 +36,7 @@ public class PackFactory {
                 break;
         }
 
-        List<Pack> packs = new ArrayList<>();
+        final List<Pack> packs = new ArrayList<>();
         Pack pack = createPack();
 
         for (Item item : items) {

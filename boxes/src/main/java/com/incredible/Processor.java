@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.incredible.types.EItemOrdering;
+import com.incredible.types.enums.EItemOrdering;
 import com.incredible.types.Item;
 import com.incredible.types.Pack;
 
-/** Template JavaDoc for Processor */
+/**
+ * Main items and packs engine.
+ */
 public class Processor {
 
     public void process(Scanner scan) {
@@ -55,7 +58,11 @@ public class Processor {
         if (packFactory != null) {
             List<Pack> packs = packFactory.processItems(items);
 
-            packs.forEach(p -> System.out.println(p + "\n"));
+            if (CollectionUtils.isNotEmpty(packs)) {
+                packs.forEach(p -> System.out.println(p + "\n"));
+            } else {
+                System.out.println("No packs created.");
+            }
         }
     }
 }

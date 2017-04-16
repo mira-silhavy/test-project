@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** Template JavaDoc for Item */
+/**
+ * Item class.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

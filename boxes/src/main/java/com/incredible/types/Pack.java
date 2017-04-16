@@ -5,10 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Template JavaDoc for Pack */
+import lombok.Data;
+
+/**
+ * Pack class.
+ */
+@Data
 public class Pack {
 
+    /**
+     * Pack counter class field.
+     */
     private static int packCounter = 1;
+
+    /**
+     * Instance fields.
+     */
     private final int number;
     private final int maxItems;
     private final BigDecimal maxWeight;
@@ -25,8 +37,18 @@ public class Pack {
     }
 
     public Item addItem(Item item) {
-        BigDecimal allowedWeight = maxWeight.subtract(currentWeight);
-        int allowedItems = Math.min(allowedWeight.divide(item.getWeight(), 1, BigDecimal.ROUND_FLOOR).intValue(), maxItems - currentItems);
+        if (item.getWeight().compareTo(maxWeight) > 0) {
+            System.out.println("Item too large to process, skipping...");
+            return null;
+        }
+
+        final BigDecimal allowedWeight = maxWeight.subtract(currentWeight);
+        final int allowedItems = Math.min(allowedWeight.divide(item.getWeight(), 1, BigDecimal.ROUND_FLOOR).intValue(),
+            maxItems - currentItems);
+
+        if (allowedItems == 0) {
+            return item;
+        }
 
         Item itemCopy = null;
 
