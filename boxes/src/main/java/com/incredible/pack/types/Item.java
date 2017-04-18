@@ -1,24 +1,28 @@
-package com.incredible.types;
+package com.incredible.pack.types;
 
 import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Item class.
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Item {
 
+    /**
+     * Instance fields.
+     */
     private int id;
     private int length;
     private int quantity;
     private BigDecimal weight;
 
+    /**
+     * Copy constructor.
+     */
     public Item(Item item) {
         this.id = item.id;
         this.length = item.length;

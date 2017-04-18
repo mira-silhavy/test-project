@@ -1,4 +1,4 @@
-package com.incredible.types;
+package com.incredible.pack.types;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import lombok.Data;
 
 /**
  * Pack class.
+ *
+ * Every pack keeps track of its current length, weight, items it contains and its current count.
  */
 @Data
 public class Pack {
@@ -36,9 +38,15 @@ public class Pack {
         this.maxWeight = maxWeight;
     }
 
+    /**
+     * Pack insert function. Contains all the pack logic for inserting, splitting or deciding whether the item fits in the pack.
+     *
+     * @return returns null if item has been consumed or is too large for processing otherwise returns new copy of an item with the
+     * updated quantity
+     */
     public Item addItem(Item item) {
         if (item.getWeight().compareTo(maxWeight) > 0) {
-            System.out.println("Item too large to process, skipping...");
+            System.out.println("Item " + item + " too heavy to fit into pack, skipping...");
             return null;
         }
 

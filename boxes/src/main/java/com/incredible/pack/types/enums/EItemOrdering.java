@@ -1,4 +1,4 @@
-package com.incredible.types.enums;
+package com.incredible.pack.types.enums;
 
 /**
  * Enum representing items sorting.

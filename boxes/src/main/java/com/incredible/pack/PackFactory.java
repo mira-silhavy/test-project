@@ -1,13 +1,13 @@
-package com.incredible;
+package com.incredible.pack;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.incredible.types.enums.EItemOrdering;
-import com.incredible.types.Item;
-import com.incredible.types.Pack;
+import com.incredible.pack.types.Item;
+import com.incredible.pack.types.Pack;
+import com.incredible.pack.types.enums.EItemOrdering;
 
 /**
  * Pack factory and items processor.
@@ -24,6 +24,9 @@ public class PackFactory {
         this.maxWeight = maxWeight;
     }
 
+    /**
+     * Main pack processing function handling items initial sort and pack creation.
+     */
     public List<Pack> processItems(List<Item> items) {
         switch (order) {
             case LONG_TO_SHORT:
@@ -37,12 +40,12 @@ public class PackFactory {
         }
 
         final List<Pack> packs = new ArrayList<>();
-        Pack pack = createPack();
+        Pack pack = makePack();
 
         for (Item item : items) {
             while ((item = pack.addItem(item)) != null) {
                 packs.add(pack);
-                pack = createPack();
+                pack = makePack();
             }
         }
 
@@ -53,7 +56,7 @@ public class PackFactory {
         return packs;
     }
 
-    public Pack createPack() {
+    public Pack makePack() {
         return new Pack(maxItems, maxWeight);
     }
 }
