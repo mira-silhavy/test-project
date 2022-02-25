@@ -7,7 +7,7 @@
     <groupId>com.incredible.pack</groupId>
     <artifactId>boxes</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Boxes Project :)</name>
 
@@ -17,6 +17,11 @@
             <email>mirek.silhavy@gmail.com</email>
         </developer>
     </developers>
+
+    <modules>
+        <module>box</module>
+        <module>box</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -145,6 +150,24 @@
                         <version>${junit.jupiter.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>se.vandmo</groupId>
+                <artifactId>dependency-lock-maven-plugin</artifactId>
+                <version>0.25</version>
+                <configuration>
+                    <format>pom</format>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
