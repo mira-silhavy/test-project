@@ -146,6 +146,24 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <plugin>
+                <groupId>se.vandmo</groupId>
+                <artifactId>dependency-lock-maven-plugin</artifactId>
+                <version>0.25</version>
+                <configuration>
+                    <format>pom</format>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
