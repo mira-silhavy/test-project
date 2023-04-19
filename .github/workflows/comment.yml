@@ -1,16 +1,12 @@
-name: Validate Flyway Migration
+name: Comment
 on:
-  status:
-    types: [ success ]
-  check_run:
-    types: [ completed ]
   issue_comment:
     types: [ created ]
 jobs:
   build:
-    name: Validate Flyway Migration
+    name: Comment
     runs-on: ubuntu-latest
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '/test') || github.event.state == 'success' || github.event.check_run.conclusion == 'success' && github.event.check_run.name == 'Build (Maven Build Feature)'
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/test')
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
