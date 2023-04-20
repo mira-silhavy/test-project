@@ -57,7 +57,8 @@ jobs:
               ref: context.payload.check_run.head_sha,
               check_name: context.payload.check_run.name
             });
-            console.log(id);
+            echo 
+            console.log("bla" + id);
 #            await github.checks.update({
 #              owner: context.repo.owner,
 #              repo: context.repo.repo,
