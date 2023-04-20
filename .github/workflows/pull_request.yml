@@ -1,0 +1,65 @@
+name: Validate Flyway Migration
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+jobs:
+  build:
+    name: Validate Flyway Migration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+          fetch-depth: 1
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Export new migrates
+        id: export-new-migrates
+        run: |
+          git diff --name-only --diff-filter=A origin/${{ github.base_ref }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
+          echo "Exported migrates"
+      - name: Check migrates empty
+        id: check-migrates-empty
+        run: |
+          if [ ! -s new_migrates.txt ]; then
+            echo "skip-steps=true" >> $GITHUB_ENV
+            echo "Flyway validation results:" >> $GITHUB_STEP_SUMMARY
+            echo "No new migrates, skipping validation" >> $GITHUB_STEP_SUMMARY
+            echo "No migrates skipping all following steps"
+          else
+            echo "skip-steps=false" >> $GITHUB_ENV
+            echo "Found new migrates, continue with validation"
+          fi
+      - name: Parse pom.xml version
+        if: env.skip-steps != 'true'
+        id: parse-version
+        run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      - name: Set up Java
+        if: env.skip-steps != 'true'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Run Java Validation
+        id: run_python_script
+        if: env.skip-steps != 'true'
+        run: java FlywayValidation.java ${{ env.version }} new_migrates.txt
+      - name: Add comment to PR
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const name = '${{ github.workflow   }}';
+            const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+            const success = '${{ job.status }}' === 'success';
+            const body = `${name}: ${success ? 'succeeded ✅' : 'failed ❌'}\n${url}`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
