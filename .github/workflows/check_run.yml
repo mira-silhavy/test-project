@@ -53,10 +53,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { data } = await github.rest.checks.listForSuite({
+            const { data } = await github.rest.checks.listCommitStatusesForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              check_suite_id: ${{ github.event.check_run.check_suite.id }}
+              ref: context.payload.check_run.head_sha
             });
             console.log(context)
             console.log(JSON.stringify(data, null, 2));
