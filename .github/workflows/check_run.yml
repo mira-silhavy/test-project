@@ -6,6 +6,8 @@ jobs:
   build:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_RUNNER_DEBUG: true
     if: github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' && github.event.check_run.name == 'task-list-completed'
     steps:
       - name: Checkout base branch
