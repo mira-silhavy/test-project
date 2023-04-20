@@ -6,7 +6,9 @@ jobs:
   build:
     name: Validate Flyway Migration CheckRun
     runs-on: ubuntu-latest
-    if: github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' && github.event.check_run.name == 'task-list-completed'
+    if: >
+      github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' 
+      && github.event.check_run.name == 'task-list-completed' && github.event.check_run.status == 'completed'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
