@@ -1,10 +1,10 @@
-name: Validate Flyway Migration CheckRun
+name: Validate Flyway Migration Check
 on:
   check_run:
     types: [ completed ]
 jobs:
   build:
-    name: Validate Flyway Migration CheckRun
+    name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
     if: github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' && github.event.check_run.name == 'task-list-completed'
     steps:
@@ -47,25 +47,6 @@ jobs:
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java FlywayValidation.java ${{ env.version }} new_migrates.txt
-      - name: Set status check
-        uses: actions/github-script@v4
-        if: always()
-        with:
-          script: |
-            const { data: checks } = await github.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.sha
-            })
-            const latestCheck = checks.check_runs[0]
-            await github.repos.createStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: latestCheck.head_sha,
-              state: latestCheck.conclusion,
-              target_url: latestCheck.html_url,
-              context: 'Your Workflow Name'
-            })
 #      - name: Add comment to PR
 #        uses: actions/github-script@v6
 #        if: always()
