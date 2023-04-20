@@ -53,11 +53,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: { id } } = await github.rest.checks.listForRef({
+            const { data: { id } } = await github.rest.checks.listForSuite({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.payload.check_run.head_sha,
-              check_name: 'Validate Flyway Migration Check'
+              check_suite_id: ${{ github.event.check_run.check_suite.id }}
             });
             console.log(context)
             console.log("bla " + id);
