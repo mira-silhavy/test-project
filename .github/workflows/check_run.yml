@@ -49,6 +49,7 @@ jobs:
         run: java FlywayValidation.java ${{ env.version }} new_migrates.txt
       - name: Set status check
         uses: actions/github-script@v4
+        if: always()
         with:
           script: |
             const { data: checks } = await github.checks.listForRef({
