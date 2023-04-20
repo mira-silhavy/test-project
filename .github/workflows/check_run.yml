@@ -57,16 +57,17 @@ jobs:
               ref: context.payload.check_run.head_sha,
               check_name: context.payload.check_run.name
             });
-            await github.checks.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              check_run_id: id,
-              conclusion: 'success', // or 'failure' or 'neutral'
-              output: {
-                title: 'Check completed',
-                summary: 'All checks passed.'
-              }
-            });
+            echo "Check run id: $id";
+#            await github.checks.update({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              check_run_id: id,
+#              conclusion: 'success', // or 'failure' or 'neutral'
+#              output: {
+#                title: 'Check completed',
+#                summary: 'All checks passed.'
+#              }
+#            });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      - name: Add comment to PR
