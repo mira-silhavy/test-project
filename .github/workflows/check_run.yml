@@ -6,9 +6,7 @@ jobs:
   build:
     name: Validate Flyway Migration CheckRun
     runs-on: ubuntu-latest
-    if: >
-      github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' 
-      && github.event.check_run.name == 'task-list-completed'
+    if: github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' && github.event.check_run.name == 'task-list-completed'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
@@ -39,7 +37,6 @@ jobs:
           fi
       - name: Parse pom.xml version
         if: env.skip-steps != 'true'
-        id: parse-version
         run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       - name: Set up Java
         if: env.skip-steps != 'true'
@@ -48,7 +45,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Run Java Validation
-        id: run_python_script
         if: env.skip-steps != 'true'
         run: java FlywayValidation.java ${{ env.version }} new_migrates.txt
 #      - name: Add comment to PR
