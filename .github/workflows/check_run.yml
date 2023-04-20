@@ -59,6 +59,7 @@ jobs:
               ref: context.payload.check_run.head_sha,
               check_name: 'Validate Flyway Migration Check'
             });
+            console.log(context)
             console.log("bla " + id);
 #            await github.checks.update({
 #              owner: context.repo.owner,
