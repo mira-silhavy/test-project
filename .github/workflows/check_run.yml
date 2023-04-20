@@ -1,25 +1,27 @@
-name: Validate Flyway Migration
+name: Validate Flyway Migration Check
 on:
-  pull_request:
-    types: [ opened, synchronize ]
+  check_run:
+    types: [ completed ]
 jobs:
   build:
-    name: Validate Flyway Migration
+    name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
+    if: github.event.action == 'completed' && github.event.check_run.conclusion == 'success' && github.event.check_run.pull_requests != '' && github.event.check_run.name == 'task-list-completed'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.base_ref }}
+          ref: ${{ github.event.check_run.pull_requests[0].base.ref }}
           fetch-depth: 1
       - name: Checkout PR branch
         uses: actions/checkout@v3
         with:
+          ref: refs/pull/${{ github.event.check_run.pull_requests[0].number }}/merge
           fetch-depth: 1
       - name: Export new migrates
         id: export-new-migrates
         run: |
-          git diff --name-only --diff-filter=A origin/${{ github.base_ref }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
+          git diff --name-only --diff-filter=A origin/${{ github.event.check_run.pull_requests[0].base.ref }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
           echo "Exported migrates"
       - name: Check migrates empty
         id: check-migrates-empty
@@ -35,7 +37,6 @@ jobs:
           fi
       - name: Parse pom.xml version
         if: env.skip-steps != 'true'
-        id: parse-version
         run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       - name: Set up Java
         if: env.skip-steps != 'true'
@@ -44,22 +45,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Run Java Validation
-        id: run_python_script
         if: env.skip-steps != 'true'
         run: java FlywayValidation.java ${{ env.version }} new_migrates.txt
-      - name: Add comment to PR
-        uses: actions/github-script@v6
-        if: always()
-        with:
-          script: |
-            const name = '${{ github.workflow   }}';
-            const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
-            const success = '${{ job.status }}' === 'success';
-            const body = `${name}: ${success ? 'succeeded ✅' : 'failed ❌'}\n${url}`;
-
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            })
+#      - name: Add comment to PR
+#        uses: actions/github-script@v6
+#        if: always()
+#        with:
+#          script: |
+#            const name = '${{ github.workflow   }}';
+#            const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+#            const success = '${{ job.status }}' === 'success';
+#            const body = `${name}: ${success ? 'succeeded ✅' : 'failed ❌'}\n${url}`;
+#            const issue_number = ${{ github.event.check_run.pull_requests[0].number }};
+#
+#            await github.rest.issues.createComment({
+#              issue_number: issue_number,
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              body: body
+#            })
