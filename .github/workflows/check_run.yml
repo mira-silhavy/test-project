@@ -16,6 +16,7 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.check_run.pull_requests[0].head.ref }}
           fetch-depth: 1
       - name: Export new migrates
         id: export-new-migrates
@@ -57,9 +58,10 @@ jobs:
             const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
             const success = '${{ job.status }}' === 'success';
             const body = `${name}: ${success ? 'succeeded ✅' : 'failed ❌'}\n${url}`;
+            const issue_number = ${{ github.event.check_run.pull_requests[0].number }};
 
             await github.rest.issues.createComment({
-              issue_number: context.issue.number,
+              issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: body
