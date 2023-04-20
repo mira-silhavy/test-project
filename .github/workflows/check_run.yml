@@ -50,16 +50,16 @@ jobs:
         if: env.skip-steps != 'true'
         run: java FlywayValidation.java ${{ env.version }} new_migrates.txt
       - name: Update check run status
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             const { data: { id } } = await github.checks.listForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.payload.check_run.head_sha,
-              check_name: context.payload.check_run.name
+              check_name: 'Validate Flyway Migration Check'
             });
-            console.log("bla" + id);
+            console.log("bla " + id);
 #            await github.checks.update({
 #              owner: context.repo.owner,
 #              repo: context.repo.repo,
