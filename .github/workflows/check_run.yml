@@ -58,7 +58,7 @@ jobs:
               repo: context.repo.repo,
               check_suite_id: ${{ github.event.check_run.check_suite.id }}
             });
-            console.log(context)
+#            console.log(context)
             console.log(JSON.stringify(data, null, 2));
 #            await github.checks.update({
 #              owner: context.repo.owner,
