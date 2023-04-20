@@ -56,7 +56,6 @@ jobs:
             const { data } = await github.rest.checks.listForSuite({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: context.payload.check_run.head_sha,
               check_suite_id: ${{ github.event.check_run.check_suite.id }}
             });
             console.log(context)
