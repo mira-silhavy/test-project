@@ -5,7 +5,7 @@ on:
 jobs:
   validate_on_pull_request:
     name: Validate Flyway Job
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
@@ -36,6 +36,12 @@ jobs:
       - name: Parse pom.xml version
         if: env.skip-steps != 'true'
         run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      - name: Set up Java
+        if: env.skip-steps != 'true'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
