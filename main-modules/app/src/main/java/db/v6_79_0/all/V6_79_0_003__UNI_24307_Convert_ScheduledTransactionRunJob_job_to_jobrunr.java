@@ -21,7 +21,7 @@ public class V6_79_0_003__UNI_24307_Convert_ScheduledTransactionRunJob_job_to_jo
                                                   "SELECT now(), ID, ? from SCHEDULED_TRANSACTION_RUN where DELETED_DATE is null order by ID", jobId);
 
         LOGGER.info("UNI-24307 Created an in-app migrate for {} ScheduledTransactionRunImpl jobs", entityCount);
-        LOGGER.info("UNI-24307 Convert ScheduledTransactionRunJob to Jobrunr - finish");
+        LOGGER.info("UNI-24307 Convert ScheduledTransactionRunJob to Jobrunr - finish1");
     }
 
 }
