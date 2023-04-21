@@ -1,7 +1,6 @@
 name: Validate Flyway Migration
 on:
-  pull_request:
-    types: [ opened, synchronize, edited ]
+  pull_request
 jobs:
   validate_on_pull_request:
     name: Validate Flyway Job
