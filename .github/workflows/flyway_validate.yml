@@ -81,6 +81,12 @@ jobs:
             const checkIDs = response.data.check_runs.map(check => check.id);
             console.log('Check IDs: ' + checkIDs.join(', '));
             for (const check of checkIDs) {
+              const check_bla = await github.rest.checks.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                check_run_id: check
+              });
+              console.log(`Check ${check} name: ${check_bla.data.name}`);
               console.log(`Updating check ${check}...`);
               await github.rest.checks.update({
                 owner: context.repo.owner,
