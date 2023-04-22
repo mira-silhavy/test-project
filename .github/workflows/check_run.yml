@@ -9,7 +9,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log(github.event.check_run.name)
+            console.log(github.event)
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
