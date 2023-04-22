@@ -63,7 +63,7 @@ jobs:
             const response = await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: 'Flyway Validation',
+              name: 'Flyway Validation1',
               head_sha: context.payload.pull_request.head.sha,
               status: 'in_progress',
               started_at: new Date().toISOString()
@@ -124,7 +124,7 @@ jobs:
                 });
             
                 console.log(`Check ${check} name: ${check_bla.data.name}`);
-                if (!check_bla.data.name.toLowerCase().includes('validate flyway job')) {
+                if (!check_bla.data.name.toLowerCase().includes('Validation1')) {
                   console.log(`Check ${check} is not a Flyway check, skipping...`);
                   continue;
                 }
