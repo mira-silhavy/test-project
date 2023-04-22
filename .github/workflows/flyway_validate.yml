@@ -60,41 +60,44 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const response = await github.rest.pulls.list({
+            const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open'
             });
-            console.log(`Found ${response.data.length} open PRs.`);
-            return response.data.map(pr => pr.number);
-      - name: Set status
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const response = await github.rest.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.sha
-            });
-            const checks = response.data.check_runs;
-            console.log(`Found ${checks.length} checks.`);
-            const checkIDs = response.data.check_runs.map(check => check.id);
-            console.log('Check IDs: ' + checkIDs.join(', '));
-            for (const check of checkIDs) {
-              const check_bla = await github.rest.checks.get({
+            console.log(`Found ${PRs.data.length} open PRs.`);
+            const SHAs = PRs.data.map(pr => pr.head.sha);
+            for (const sha of SHAs) {
+              console.log(`SHA: ${sha}`);
+            
+              const response = await github.rest.checks.listForRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                check_run_id: check
+                ref: sha
               });
-              console.log(`Check ${check} name: ${check_bla.data.name}`);
-              const PRs = check_bla.data.pull_requests.map(check => check.number);
-              console.log('Check PRs: ' + PRs.join(', '));
-              console.log(`Updating check ${check}...`);
-              await github.rest.checks.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                check_run_id: check,
-                status: 'completed', // set status to 'completed' for example, you can change it as needed
-                conclusion: 'failure' // set conclusion to 'success' for example, you can change it as needed
-              });
+            
+              const checks = response.data.check_runs;
+              console.log(`Found ${checks.length} checks.`);
+              const checkIDs = response.data.check_runs.map(check => check.id);
+              console.log('Check IDs: ' + checkIDs.join(', '));
+            
+              for (const check of checkIDs) {
+                const check_bla = await github.rest.checks.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  check_run_id: check
+                });
+            
+                console.log(`Check ${check} name: ${check_bla.data.name}`);
+                const PRs = check_bla.data.pull_requests.map(check => check.number);
+                console.log('Check PRs: ' + PRs.join(', '));
+                console.log(`Updating check ${check}...`);
+                await github.rest.checks.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  check_run_id: check,
+                  status: 'completed', // set status to 'completed' for example, you can change it as needed
+                  conclusion: 'failure' // set conclusion to 'success' for example, you can change it as needed
+                });
+              }
             }
