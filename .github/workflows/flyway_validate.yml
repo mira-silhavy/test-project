@@ -57,6 +57,8 @@ jobs:
     steps:
       - uses: 8BitJonny/gh-get-current-pr@2.2.0
         id: PR
+        with:
+          sha: ${{ github.event.after }}
       - name: "Pull Request ${{ steps.PR.outputs.number }}"
         if: steps.PR.outputs.pr_found == 'true'
         run: |
