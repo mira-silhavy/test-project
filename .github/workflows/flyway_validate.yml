@@ -80,11 +80,11 @@ jobs:
             console.log(`Found ${checks.length} checks.`);
             const checkIDs = response.data.check_runs.map(check => check.id);
             console.log('Check IDs: ' + checkIDs.join(', '));
-            for (const check of checks) {
+            for (const check of checkIDs) {
               await github.rest.checks.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                check_run_id: check.id,
+                check_run_id: check,
                 status: 'completed', // set status to 'completed' for example, you can change it as needed
                 conclusion: 'failure' // set conclusion to 'success' for example, you can change it as needed
               });
