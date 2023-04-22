@@ -65,6 +65,7 @@ jobs:
               repo: context.repo.repo,
               state: 'open'
             });
+            console.log(`Found ${response.data.length} open PRs.`);
             return response.data.map(pr => pr.number);
       - name: get-checks
         id: get-checks
@@ -76,6 +77,7 @@ jobs:
               repo: context.repo.repo,
               ref: context.sha
             });
+            console.log(`Found ${checks.length} checks.`);
             return response.data.check_runs.map(check => check.name);
       - name: Set status
         uses: actions/github-script@v6
@@ -87,6 +89,7 @@ jobs:
               ref: context.sha
             });
             const checks = response.data.check_runs;
+            console.log(`Found ${checks.length} checks.`);
             for (const check of checks) {
               await github.rest.checks.update({
                 owner: context.repo.owner,
