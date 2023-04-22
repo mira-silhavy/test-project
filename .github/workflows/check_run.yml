@@ -1,7 +1,6 @@
 name: Validate Flyway Migration Check
 on:
-  check_run:
-    types: [ created, rerequested ]
+  check_run
 jobs:
   build:
     name: Validate Flyway Migration Check
