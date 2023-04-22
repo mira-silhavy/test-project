@@ -103,8 +103,8 @@ jobs:
                 });
             
                 console.log(`Check ${check} name: ${check_bla.data.name}`);
-                if (!contains(check_bla.data.name, 'Validate Flyway Job')) {
-                  console.log(`Check ${check} is a Flyway check, skipping...`);
+                if (!check_bla.data.name.toLowerCase().includes('validate flyway job')) {
+                  console.log(`Check ${check} is not a Flyway check, skipping...`);
                   continue;
                 }
             
