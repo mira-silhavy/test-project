@@ -9,7 +9,7 @@ jobs:
   validate_on_pull_request:
     name: Validate Flyway Job PR
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_ignored'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
@@ -49,6 +49,27 @@ jobs:
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
+
+  validate_on_pull_request_create:
+    name: Validate Flyway Job PR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Create check
+        id: create-check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Flyway Validation',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'in_progress',
+              started_at: new Date().toISOString()
+            });
+            console.log(response);
+            core.setOutput('check_id', response.data.id);
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
@@ -121,7 +142,13 @@ jobs:
             
                 console.log(`Updating check ${check}...`);
                 
-
+                rerequest_response = await github.rest.checks.rerequest({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  check_run_id: check
+                });
+            
+                console.log(rerequest_response);
                 
                 // const update_response = await github.rest.checks.update({
                 //   owner: context.repo.owner,
