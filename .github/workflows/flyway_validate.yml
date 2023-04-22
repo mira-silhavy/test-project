@@ -96,6 +96,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   check_run_id: check,
+                  name: 'Validate Flyway Job',
                   status: 'completed', // set status to 'completed' for example, you can change it as needed
                   conclusion: 'failure' // set conclusion to 'success' for example, you can change it as needed
                 });
