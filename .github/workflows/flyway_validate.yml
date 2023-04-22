@@ -72,6 +72,12 @@ jobs:
             const SHAs = PRs.data.map(pr => pr.head.sha);
             for (const sha of SHAs) {
               console.log(`SHA: ${sha}`);
+              console.log(`Context SHA: ${context.sha}`);
+            
+              if (sha == context.sha) {
+                console.log(`SHA ${sha} is the same as the one that triggered the workflow, skipping...`);
+                continue;
+              }
             
               const response = await github.rest.checks.listForRef({
                 owner: context.repo.owner,
