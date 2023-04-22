@@ -60,7 +60,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log(`Ref: ${context}`);
+            console.log(context)
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
