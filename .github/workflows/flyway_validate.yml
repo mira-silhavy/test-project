@@ -61,6 +61,7 @@ jobs:
         with:
           script: |
             console.log(context)
+            # get PRs targeting pushed branch
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
