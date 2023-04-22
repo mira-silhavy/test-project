@@ -88,7 +88,7 @@ jobs:
               });
               console.log(`Check ${check} name: ${check_bla.data.name}`);
               const PRs = check_bla.data.pull_requests.map(check => check.number);
-              console.log('Check PRs: ' + checkIDs.join(', '));
+              console.log('Check PRs: ' + PRs.join(', '));
               console.log(`Updating check ${check}...`);
               await github.rest.checks.update({
                 owner: context.repo.owner,
