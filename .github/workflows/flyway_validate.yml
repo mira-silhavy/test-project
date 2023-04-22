@@ -59,6 +59,7 @@ jobs:
         id: PR
         with:
           sha: ${{ github.event.after }}
+      - run: echo ${{ steps.PR.outputs.pr_found }}
       - name: "Pull Request ${{ steps.PR.outputs.number }}"
         if: steps.PR.outputs.pr_found == 'true'
         run: |
