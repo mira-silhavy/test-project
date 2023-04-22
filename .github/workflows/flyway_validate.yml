@@ -89,6 +89,10 @@ jobs:
                 });
             
                 console.log(`Check ${check} name: ${check_bla.data.name}`);
+                if (check_bla.data.name != 'Validate Flyway Job') {
+                  console.log(`Check ${check} is not a Flyway check, skipping...`);
+                  continue;
+                }
                 const PRs = check_bla.data.pull_requests.map(check => check.number);
                 console.log('Check PRs: ' + PRs.join(', '));
                 console.log(`Updating check ${check}...`);
