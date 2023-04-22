@@ -108,20 +108,33 @@ jobs:
                   continue;
                 }
             
-                console.log(`Updating check ${check}...`);
-                const update_response = await github.rest.checks.update({
+                check_bla.data.pull_requests.forEach(pr => {
+                  console.log(`PR: ${pr.number}`);
+            
+                  await github.rest.pulls.update({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  check_run_id: check,
-                  name: 'Flyway Validation',
-                  status: 'completed', // set status to 'completed' for example, you can change it as needed
-                  conclusion: 'success', // set conclusion to 'success' for example, you can change it as needed
-                  output: {
-                      title: 'check_name',
-                      summary: 'output',
-                      text: 'text'
-                    }
+                  pull_number: pr
+                  });
                 });
+            
+                console.log(`Updating check ${check}...`);
+                
+
+                
+                // const update_response = await github.rest.checks.update({
+                //   owner: context.repo.owner,
+                //   repo: context.repo.repo,
+                //   check_run_id: check,
+                //   name: 'Flyway Validation',
+                //   status: 'completed', // set status to 'completed' for example, you can change it as needed
+                //   conclusion: 'success', // set conclusion to 'success' for example, you can change it as needed
+                //   output: {
+                //       title: 'check_name',
+                //       summary: 'output',
+                //       text: 'text'
+                //     }
+                // });
                 console.log(update_response);
             
               }
