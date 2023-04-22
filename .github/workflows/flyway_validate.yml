@@ -112,9 +112,10 @@ jobs:
                   console.log(`PR: ${pr.number}`);
             
                   await github.rest.pulls.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: pr
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: pr,
+                    body: 'This PR is outdated, please rebase it on the latest master.'
                   });
                 }
             
