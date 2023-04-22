@@ -108,7 +108,7 @@ jobs:
                   continue;
                 }
             
-                check_bla.data.pull_requests.forEach(pr => {
+                for (const pr of check_bla.data.pull_requests) {
                   console.log(`PR: ${pr.number}`);
             
                   await github.rest.pulls.update({
@@ -116,7 +116,7 @@ jobs:
                   repo: context.repo.repo,
                   pull_number: pr
                   });
-                });
+                }
             
                 console.log(`Updating check ${check}...`);
                 
@@ -135,7 +135,7 @@ jobs:
                 //       text: 'text'
                 //     }
                 // });
-                console.log(update_response);
+                // console.log(update_response);
             
               }
             
