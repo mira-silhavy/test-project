@@ -96,4 +96,3 @@ jobs:
                 conclusion: 'failure' // set conclusion to 'success' for example, you can change it as needed
               });
             }
-          token: ${{ secrets.GITHUB_TOKEN }}
