@@ -142,7 +142,7 @@ jobs:
             
                 console.log(`Updating check ${check}...`);
                 
-                rerequest_response = await github.rest.checks.rerequest({
+                rerequest_response = await github.rest.checks.rerequestRun({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   check_run_id: check
