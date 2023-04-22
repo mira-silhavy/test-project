@@ -1,11 +1,12 @@
 name: Validate Flyway Migration Check
 on:
-  check_run:
-    types: [ created, rerequested ]
+  check_run
 jobs:
   build:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
+    run: |
+      console.log(github.event.check_run)
     if: github.event.check_run.pull_requests != '' && github.event.check_run.name == 'Flyway Validation1'
     steps:
       - name: Checkout base branch
