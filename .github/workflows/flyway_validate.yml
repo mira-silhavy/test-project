@@ -63,6 +63,7 @@ jobs:
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
+              base: github.base_ref,
               state: 'open'
             });
             console.log(`Found ${PRs.data.length} open PRs.`);
