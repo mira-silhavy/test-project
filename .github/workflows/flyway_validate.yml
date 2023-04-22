@@ -76,6 +76,11 @@ jobs:
                 ref: sha
               });
             
+              if (response.data.total_count == 0) {
+                console.log(`No checks found for ${sha}, skipping...`);
+                continue;
+              }
+            
               const checks = response.data.check_runs;
               console.log(`Found ${checks.length} checks.`);
               const checkIDs = response.data.check_runs.map(check => check.id);
