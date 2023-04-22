@@ -6,7 +6,10 @@ jobs:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
     steps:
-      - run: console.log(github.event.check_run.name)
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            console.log(github.event.check_run.name)
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
