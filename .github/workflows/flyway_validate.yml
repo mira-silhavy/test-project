@@ -9,7 +9,7 @@ jobs:
   validate_on_pull_request:
     name: Validate Flyway Job PR
     runs-on: ubuntu-latest
-    if: github.event.name == 'pull_request'
+    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
@@ -53,7 +53,7 @@ jobs:
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
     runs-on: ubuntu-latest
-    if: github.event.name == 'push'
+    if: github.event_name == 'push'
     steps:
       - uses: 8BitJonny/gh-get-current-pr@2.2.0
       - run: echo "PR ${prNumber} ${prTitle} at ${prUrl} is ${prJSON}"
