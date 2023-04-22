@@ -63,10 +63,10 @@ jobs:
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              base: github.base_ref,
+              base: ${{ env.GITHUB_REF }},
               state: 'open'
             });
-            console.log(`Found ${PRs.data.length} open PRs targeting ${github.base_ref}.`);
+            console.log(`Found ${PRs.data.length} open PRs targeting ${{ env.GITHUB_REF }}.`);
             const SHAs = PRs.data.map(pr => pr.head.sha);
             for (const sha of SHAs) {
               console.log(`SHA: ${sha}`);
