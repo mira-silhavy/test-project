@@ -60,7 +60,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const response = await github.pulls.list({
+            const response = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open'
