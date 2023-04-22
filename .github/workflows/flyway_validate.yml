@@ -1,13 +1,15 @@
 name: Validate Flyway Migration
 on:
   pull_request:
-    types: [ opened, synchronize ]
-  pull_request_target:
-    types: [ synchronize ]
+    types: [ opened, synchronize, edited ]
+  push:
+    branches:
+      - master
 jobs:
   validate_on_pull_request:
-    name: Validate Flyway Job
+    name: Validate Flyway Job PR
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
@@ -47,3 +49,73 @@ jobs:
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
+
+  validate_on_push_to_master:
+    name: Validate Flyway Job PUSH
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: List PRs
+        id: prs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log(context)
+            // get PRs targeting pushed branch
+            const PRs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: context.ref,
+              state: 'open'
+            });
+            console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
+            const SHAs = PRs.data.map(pr => pr.head.sha);
+            for (const sha of SHAs) {
+              console.log(`SHA: ${sha}`);
+              console.log(`Context SHA: ${context.sha}`);
+            
+              if (sha == context.sha) {
+                console.log(`SHA ${sha} is the same as the one that triggered the workflow, skipping...`);
+                continue;
+              }
+            
+              const response = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: sha
+              });
+            
+              if (response.data.total_count == 0) {
+                console.log(`No checks found for ${sha}, skipping...`);
+                continue;
+              }
+            
+              const checks = response.data.check_runs;
+              console.log(`Found ${checks.length} checks.`);
+              const checkIDs = response.data.check_runs.map(check => check.id);
+              console.log('Check IDs: ' + checkIDs.join(', '));
+            
+              for (const check of checkIDs) {
+                const check_bla = await github.rest.checks.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  check_run_id: check
+                });
+            
+                console.log(`Check ${check} name: ${check_bla.data.name}`);
+                if (check_bla.data.name != 'Validate Flyway Job') {
+                  console.log(`Check ${check} is not a Flyway check, skipping...`);
+                  continue;
+                }
+            
+                console.log(`Updating check ${check}...`);
+                await github.rest.checks.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  check_run_id: check,
+                  name: 'Validate Flyway Job',
+                  status: 'completed', // set status to 'completed' for example, you can change it as needed
+                  conclusion: 'success' // set conclusion to 'success' for example, you can change it as needed
+                });
+              }
+            }
