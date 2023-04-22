@@ -2,12 +2,14 @@ name: Validate Flyway Migration
 on:
   pull_request:
     types: [ opened, synchronize, edited ]
-  pull_request_target:
-    types: [ synchronize, edited ]
+  push:
+    branches:
+      - master
 jobs:
   validate_on_pull_request:
     name: Validate Flyway Job
     runs-on: ubuntu-latest
+    if: github.event.name == 'pull_request'
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v3
@@ -47,3 +49,25 @@ jobs:
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
+
+  validate_on_push_to_master:
+    name: Validate Flyway Job
+    runs-on: ubuntu-latest
+    if: github.event.name == 'push'
+    steps:
+      - uses: 8BitJonny/gh-get-current-pr@2.2.0
+      - run: echo "PR ${prNumber} ${prTitle} at ${prUrl} is ${prJSON}"
+        if: steps.PR.outputs.pr_found == 'true'
+        env:
+          # JSON object with the full PR object
+          # toJSON(fromJSON(...pr)) parses it into memory and then format is with pretty-print.
+          prJSON: ${{ toJSON(fromJSON(steps.current_pr.outputs.pr)) }}
+          # Direct access to common PR properties
+          prNumber: ${{ steps.PR.outputs.number }}
+          prUrl: ${{ steps.PR.outputs.pr_url }}
+          prTitle: ${{ steps.PR.outputs.pr_title }}
+          prBody: ${{ steps.PR.outputs.pr_body }}
+          prCreatedAt: ${{ steps.PR.outputs.pr_created_at }}
+          prMergedAt: ${{ steps.PR.outputs.pr_merged_at }}
+          prClosedAt: ${{ steps.PR.outputs.pr_closed_at }}
+          prLabel: ${{ steps.PR.outputs.pr_labels }}
