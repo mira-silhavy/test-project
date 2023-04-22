@@ -119,6 +119,7 @@ jobs:
                   output: {
                       title: 'check_name',
                       summary: 'output',
+                      text: 'text'
                     }
                 });
                 console.log(update_response);
