@@ -5,8 +5,8 @@ jobs:
   build:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
-    if: github.event.check_run.name == 'Flyway Validation1'
     steps:
+      - run: console.log(github.event.check_run.name)
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
