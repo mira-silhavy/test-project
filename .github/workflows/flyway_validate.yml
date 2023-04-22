@@ -60,13 +60,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            console.log(`Ref: ${context}`);
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              base: ${{ env.GITHUB_REF }},
+              base: context.ref,
               state: 'open'
             });
-            console.log(`Found ${PRs.data.length} open PRs targeting ${{ env.GITHUB_REF }}.`);
+            console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
             const SHAs = PRs.data.map(pr => pr.head.sha);
             for (const sha of SHAs) {
               console.log(`SHA: ${sha}`);
