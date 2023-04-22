@@ -87,6 +87,7 @@ jobs:
                 check_run_id: check
               });
               console.log(`Check ${check} name: ${check_bla.data.name}`);
+              console.log(`Check ${check} PR: ${check_bla.data.pull_requests[0].number}`);
               console.log(`Updating check ${check}...`);
               await github.rest.checks.update({
                 owner: context.repo.owner,
