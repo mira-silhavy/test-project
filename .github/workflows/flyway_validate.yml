@@ -7,7 +7,7 @@ on:
       - master
 jobs:
   validate_on_pull_request:
-    name: Validate Flyway Job
+    name: Validate Flyway Job PR
     runs-on: ubuntu-latest
     if: github.event.name == 'pull_request'
     steps:
@@ -51,7 +51,7 @@ jobs:
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
 
   validate_on_push_to_master:
-    name: Validate Flyway Job
+    name: Validate Flyway Job PUSH
     runs-on: ubuntu-latest
     if: github.event.name == 'push'
     steps:
