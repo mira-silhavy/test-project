@@ -109,13 +109,16 @@ jobs:
                 }
             
                 console.log(`Updating check ${check}...`);
-                await github.rest.checks.update({
+                const update_response = await github.rest.checks.update({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   check_run_id: check,
                   name: 'Validate Flyway Job',
-                  status: 'completed', // set status to 'completed' for example, you can change it as needed
-                  conclusion: 'success' // set conclusion to 'success' for example, you can change it as needed
+                  status: 'in_progress' // set status to 'completed' for example, you can change it as needed
+                  //conclusion: 'success' // set conclusion to 'success' for example, you can change it as needed
                 });
+                console.log(update_response);
+                
               }
+            
             }
