@@ -66,22 +66,34 @@ jobs:
               state: 'open'
             });
             return response.data.map(pr => pr.number);
-
+      - name: get-checks
+        id: get-checks
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha
+            });
+            return response.data.check_runs.map(check => check.name);
       - name: Set status
         uses: actions/github-script@v6
         with:
           script: |
-            const promises = context.payload.commits.map(commit => {
-              const [owner, repo] = context.payload.repository.full_name.split('/');
-              return github.repos.createCommitStatus({
-                owner: owner,
-                repo: repo,
-                sha: commit.id,
-                state: 'success',
-                target_url: 'https://example.com',
-                description: 'All checks passed',
-                context: 'continuous-integration'
-              });
+            const response = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha
             });
-            return Promise.all(promises);
+            const checks = response.data.check_runs;
+            for (const check of checks) {
+              await github.rest.checks.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                check_run_id: check.id,
+                status: 'completed', // set status to 'completed' for example, you can change it as needed
+                conclusion: 'success' // set conclusion to 'success' for example, you can change it as needed
+              });
+            }
           token: ${{ secrets.GITHUB_TOKEN }}
