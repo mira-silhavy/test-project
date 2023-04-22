@@ -114,7 +114,7 @@ jobs:
                   await github.rest.pulls.update({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    pull_number: pr,
+                    pull_number: pr.number,
                     body: 'This PR is outdated, please rebase it on the latest master.'
                   });
                 }
