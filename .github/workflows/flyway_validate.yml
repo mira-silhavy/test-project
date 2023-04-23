@@ -52,14 +52,12 @@ jobs:
 
   call_workflow:
     needs: validate_on_pull_request_create
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
-    steps:
-      - run: |
-          echo run=${{ matrix.run_id }}
-    # uses: ./.github/workflows/check_run.yml
+    uses: ./.github/workflows/check_run.yml
+    with:
+      run_id: ${{ matrix.run_id }}
 
   validate_on_pull_request_create:
     name: Validate Flyway Job PR
@@ -85,11 +83,6 @@ jobs:
             const json = { "run_id": [ response.data.id ] };
             console.log(json);
             return json;
-      - name: Bla
-        run: |
-          echo "run_matrix={\"run_id\": [${{ steps.create-check.outputs.result }}]" >> $GITHUB_ENV
-          echo "${{ env.run_matrix }}"
-    # needs: call_workflow
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
