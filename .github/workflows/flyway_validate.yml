@@ -46,7 +46,7 @@ jobs:
             console.log(response);
             const identifier = response.data.id + "-" + context.payload.pull_request.number;
             console.log(identifier);
-            const json = { "check_id": [ response.data.id ] };
+            const json = { "check_id": [ identifier ] };
             console.log(json);
             return json;
 
