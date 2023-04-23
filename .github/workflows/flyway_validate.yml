@@ -137,7 +137,8 @@ jobs:
                   repo: context.repo.repo,
                   check_run_id: check,
                   status: 'in_progress',
-                  started_at: new Date().toISOString()
+                  started_at: new Date().toISOString(),
+                  conclusion: null
                 });
             
                 console.log(response);
