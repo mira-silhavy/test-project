@@ -52,7 +52,6 @@ jobs:
 
   call_workflow:
     strategy:
-      fail-fast: false
       matrix:
         run_id: [ ${ { env.run_id } } ]
     uses: ./.github/workflows/check_run.yml
