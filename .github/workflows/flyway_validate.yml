@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        run_id: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
+        run_id: ${{needs.validate_on_pull_request_create.outputs.matrix}}
     uses: ./.github/workflows/check_run.yml
     with:
       run_id: ${{ matrix.run_id }}
@@ -83,7 +83,7 @@ jobs:
             console.log(response);
             const json = { "run_id": [ response.data.id ] };
             console.log(json);
-            return json;
+            return response.data.id;
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
