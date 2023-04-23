@@ -138,8 +138,8 @@ jobs:
                   check_run_id: check,
                   status: 'in_progress',
                   started_at: new Date().toISOString(),
-                  completed_at: '',
-                  output: ''
+                  completed_at: null,
+                  output: null
                 });
             
                 console.log(response);
