@@ -6,6 +6,7 @@ on:
     branches:
       - master
 
+jobs:
   call_workflow:
     needs: validate_on_pull_request_create
     strategy:
