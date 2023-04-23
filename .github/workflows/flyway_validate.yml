@@ -7,11 +7,18 @@ on:
       - master
 
 jobs:
-  call_workflow:
+  call_workflow_PR:
     needs: validate_on_pull_request_create
     strategy:
-      fail-fast: false
       matrix: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
+    uses: ./.github/workflows/check_run.yml
+    with:
+      target: ${{ matrix.run_id }}
+
+  call_workflow_PUSH:
+    needs: validate_on_push_to_master
+    strategy:
+      matrix: ${{fromJSON(needs.validate_on_push_to_master.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
       target: ${{ matrix.run_id }}
@@ -132,3 +139,7 @@ jobs:
             }
             
             console.log(run_ids);
+            
+            const json = { "run_ids": run_ids };
+            console.log(json);
+            return json;
