@@ -132,18 +132,13 @@ jobs:
             
                 console.log(`Creating check ${check}... with PR SHA ${pr_sha}`);
             
-                const response1 = await github.rest.checks.rerequestRun({
+                const response = await github.rest.checks.create({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  check_run_id: check,
-                });     
-                
-                const response = await github.rest.checks.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  check_run_id: check,
+                  name: 'Flyway Validation PR Check',
+                  head_sha: pr_sha,
                   status: 'in_progress',
-                  started_at: new Date().toISOString(),
+                  started_at: new Date().toISOString()
                 });
             
                 console.log(response);
