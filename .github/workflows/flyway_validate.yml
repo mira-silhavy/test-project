@@ -1,10 +1,11 @@
 name: Validate Flyway Migration
 on:
   pull_request:
-    types: [ opened, synchronize, edited ]
+    types: [ opened, synchronize ]
   push:
     branches:
       - master
+      - release*
 
 jobs:
   call_workflow_PR:
