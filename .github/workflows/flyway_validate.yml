@@ -50,10 +50,21 @@ jobs:
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
 
+  call_workflow:
+    needs: validate_on_pull_request_create
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
+    uses: ./.github/workflows/check_run.yml
+    with:
+      run_id: ${{ matrix.run_id }}
+
   validate_on_pull_request_create:
     name: Validate Flyway Job PR
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    outputs:
+      matrix: ${{ steps.create-check.outputs.result }}
     steps:
       - name: Create check
         id: create-check
@@ -72,7 +83,7 @@ jobs:
             const json = { "run_id": response.data.id };
             console.log(json);
             console.log(fromJSON(response.data.id));
-            return response.data.id;
+            return json;
       - name: Bla
         run: |
           echo "run_matrix={\"run_id\": [${{ steps.create-check.outputs.result }}]" >> $GITHUB_ENV
