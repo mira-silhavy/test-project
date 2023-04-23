@@ -61,15 +61,33 @@ jobs:
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
-      - name: Update check run status
+      - name: Update check run fail
+        if: ${{ steps.java.exitcode == 0 }}
         uses: actions/github-script@v6
         with:
           script: |
-            await github.checks.update({
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              check_run_id: ${{ env.check-id }},
+              conclusion: 'failure', // or 'failure' or 'neutral'
+              completed_at: new Date().toISOString(),
+              output: {
+                title: 'Check failed',
+                summary: 'The Java command exited with a non-zero code.'
+              }
+            });
+      - name: Update check run success
+        if: ${{ steps.java.exitcode != 0 }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               check_run_id: ${{ env.check-id }},
               conclusion: 'success', // or 'failure' or 'neutral'
+              completed_at: new Date().toISOString(),
               output: {
                 title: 'Check completed',
                 summary: 'All checks passed.'
