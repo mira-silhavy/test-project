@@ -13,6 +13,10 @@ jobs:
       - name: Print Inputs
         run: |
           echo "Release Type: ${{ inputs.target }}"
+          IFS=':' read -ra TARGET_ARR <<< "$INPUT_TARGET"
+          echo "Check: ${TARGET_ARR[0]}"
+          echo "PR: ${TARGET_ARR[1]}"
+
       - name: Get check
         id: get-check
         uses: actions/github-script@v6
