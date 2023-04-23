@@ -95,7 +95,7 @@ jobs:
                 });
             
                 console.log(`Check ${check} name: ${check_bla.data.name}`);
-                if (!check_bla.data.name.toLowerCase().includes('PR Check')) {
+                if (!check_bla.data.name.toLowerCase().includes('pr check')) {
                   console.log(`Check ${check} is not a Flyway check, skipping...`);
                   continue;
                 }
