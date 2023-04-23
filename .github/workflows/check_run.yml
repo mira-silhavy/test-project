@@ -68,7 +68,7 @@ jobs:
             await github.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              check_run_id: ${{ inputs.target }},
+              check_run_id: ${{ env.check-id }},
               conclusion: 'success', // or 'failure' or 'neutral'
               output: {
                 title: 'Check completed',
