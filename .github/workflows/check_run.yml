@@ -62,7 +62,7 @@ jobs:
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
       - name: Update check run fail
-        if: ${{ steps.java.exitcode == 0 }}
+        if: ${{ steps.java.exitcode != 0 }}
         uses: actions/github-script@v6
         with:
           script: |
@@ -78,7 +78,7 @@ jobs:
               }
             });
       - name: Update check run success
-        if: ${{ steps.java.exitcode != 0 }}
+        if: ${{ steps.java.exitcode == 0 }}
         uses: actions/github-script@v6
         with:
           script: |
