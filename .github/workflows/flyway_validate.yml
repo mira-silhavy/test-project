@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - master
-      - release*
+      - release-*
 
 jobs:
   call_workflow_PR:
