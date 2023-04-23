@@ -26,6 +26,8 @@ jobs:
                 });
                         
             console.log(check)
+            console.log(check.pull_requests[0].base.ref)
+            console.log(check.pull_requests[0].number)
             
             return check
       - name: Checkout base branch
