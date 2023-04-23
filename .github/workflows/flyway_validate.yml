@@ -18,7 +18,7 @@ jobs:
   call_workflow_PUSH:
     needs: validate_on_push
     strategy:
-      matrix: ${{fromJSON(needs.validate_on_push_to_master.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
       target: ${{ matrix.check_id }}
