@@ -44,6 +44,8 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
+            const identifier = response.data.id + "-" + context.payload.pull_request.number;
+            console.log(identifier);
             const json = { "check_id": [ response.data.id ] };
             console.log(json);
             return json;
@@ -109,10 +111,12 @@ jobs:
                 }
             
                 var pr_sha = 'none';
+                var pr_number = 'none';
                 for (const pr of check_bla.data.pull_requests) {
                   console.log(`PR: ${pr.number}`);
             
                   pr_sha = pr.head.sha;
+                  pr_number = pr.number;
             
                   await github.rest.pulls.update({
                     owner: context.repo.owner,
@@ -120,6 +124,8 @@ jobs:
                     pull_number: pr.number,
                     body: 'This PR is outdated, please rebase it on the latest master.'
                   });
+                  
+                  break;
                 }
             
                 console.log(`Creating check ${check}... with PR SHA ${pr_sha}`);
@@ -135,7 +141,9 @@ jobs:
             
                 console.log(response);
             
-                check_ids.push(response.data.id);
+                const identifier = response.data.id + "-" + pr_number;
+            
+                check_ids.push(identifier);
             
               }            
             }
