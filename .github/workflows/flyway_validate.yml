@@ -52,7 +52,7 @@ jobs:
 
   call_workflow:
     strategy:
-      matrix: ${{fromJSON(env.run_matrix)}}
+      matrix: ${{fromJSON(${{ env.run_matrix }})}}
     uses: ./.github/workflows/check_run.yml
     with:
       run_id: ${{ matrix.run_id }}
