@@ -82,7 +82,7 @@ jobs:
             console.log(response);
             const json = { "run_id": [ response.data.id ] };
             console.log(json);
-            return response.data.id;
+            return json;
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
