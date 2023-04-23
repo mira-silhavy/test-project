@@ -119,13 +119,6 @@ jobs:
                   pr_sha = pr.head.sha;
                   pr_number = pr.number;
                   pr_base = pr.base.ref;
-            
-                  await github.rest.pulls.update({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    pull_number: pr.number,
-                    body: 'This PR is outdated, please rebase it on the latest master.'
-                  });
                   
                   break;
                 }
@@ -135,7 +128,7 @@ jobs:
                 const response = await github.rest.checks.create({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  name: 'Flyway Validation Push Check',
+                  name: 'Flyway Validation PR Check',
                   head_sha: pr_sha,
                   status: 'in_progress',
                   started_at: new Date().toISOString()
