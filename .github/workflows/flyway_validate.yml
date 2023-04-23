@@ -54,7 +54,7 @@ jobs:
     needs: validate_on_pull_request_create
     strategy:
       matrix:
-        target: ${{needs.validate_on_pull_request_create.outputs.matrix}}
+        target: [1]
     uses: ./.github/workflows/check_run.yml
     with:
       target: ${{ matrix.target }}
