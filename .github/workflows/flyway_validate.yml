@@ -50,12 +50,12 @@ jobs:
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
 
-  call_workflow:
-    strategy:
-      matrix: ${{fromJSON(${{ env.run_matrix }})}}
-    uses: ./.github/workflows/check_run.yml
-    with:
-      run_id: ${{ matrix.run_id }}
+#  call_workflow:
+#    strategy:
+#      matrix: ${{fromJSON(${{ env.run_matrix }})}}
+#    uses: ./.github/workflows/check_run.yml
+#    with:
+#      run_id: ${{ matrix.run_id }}
 
   validate_on_pull_request_create:
     name: Validate Flyway Job PR
@@ -77,8 +77,9 @@ jobs:
             });
             console.log(response);
             echo "run_matrix={\"run_id\": [${{ env.run_id }}]" >> $GITHUB_ENV
-            echo "${{ env.run_id }}"
-    needs: call_workflow
+            echo "${{ env.run_matrix }}"
+            echo "${{fromJSON(env.run_matrix)}}"
+    # needs: call_workflow
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
