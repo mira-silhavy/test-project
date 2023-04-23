@@ -15,10 +15,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log('${{ inputs.target }}')
+            console.log(${{ inputs.target }})
             
-            const check_id = ${{ inputs.target }}.split('-')[0]
-            const pr_number = ${{ inputs.target }}.split('-')[1]
+            const input = ${{ inputs.target }}
+            
+            console.log(input)
                         
             const check = await github.rest.checks.get({
                   owner: context.repo.owner,
@@ -27,11 +28,6 @@ jobs:
                 });
                         
             console.log(check)
-            console.log(pr_number)
-            for (const pr of check.pull_requests) {
-              console.log(pr.base.ref)
-              console.log(pr.number)
-            }
             
             return check
       - name: Checkout base branch
