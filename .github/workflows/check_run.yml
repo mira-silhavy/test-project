@@ -16,8 +16,9 @@ jobs:
         with:
           script: |
             const input = ${{ inputs.target }}
-            const check_id = input.split(":")[0]
-            const pr_number = input.split(":")[1]
+            const string = input.toString()
+            const check_id = string.split(":")[0]
+            const pr_number = string.split(":")[1]
             console.log(check_id)
             console.log(pr_number)
                         
