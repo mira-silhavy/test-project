@@ -69,8 +69,8 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            echo "run_id=${response.data.id}" >> $GITHUB_ENV
-            echo "${ env.run_id }"
+            echo "run_id=${{ env.run_id }}" >> $GITHUB_ENV
+            echo "${{ env.run_id }}"
       - name: Call workflow
     strategy:
       fail-fast: false
