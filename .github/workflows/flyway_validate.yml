@@ -54,7 +54,8 @@ jobs:
     needs: validate_on_pull_request_create
     strategy:
       fail-fast: false
-      matrix: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
+      matrix:
+        run_id: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
       run_id: ${{ matrix.run_id }}
