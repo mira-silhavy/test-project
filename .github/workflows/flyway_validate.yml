@@ -52,7 +52,7 @@ jobs:
 
   call_workflow:
     strategy:
-      matrix: ${{fromJSON(needs.job1.outputs.matrix)}}
+      matrix: ${{fromJSON(env.run_matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
       run_id: ${{ matrix.run_id }}
@@ -76,7 +76,7 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            echo "run_id={\"run_id\": [${{ env.run_id }}]" >> $GITHUB_ENV
+            echo "run_matrix={\"run_id\": [${{ env.run_id }}]" >> $GITHUB_ENV
             echo "${{ env.run_id }}"
     needs: call_workflow
 
