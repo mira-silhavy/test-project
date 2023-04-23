@@ -80,7 +80,6 @@ jobs:
             console.log(response);
             const json = { "run_id": response.data.id };
             console.log(json);
-            console.log(fromJSON(response.data.id));
             return json;
       - name: Bla
         run: |
