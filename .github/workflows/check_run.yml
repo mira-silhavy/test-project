@@ -1,6 +1,10 @@
 name: Validate Flyway Migration Check
 on:
-  workflow_call
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: number
 jobs:
   build:
     name: Validate Flyway Migration Check
