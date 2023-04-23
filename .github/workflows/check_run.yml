@@ -27,7 +27,7 @@ jobs:
                         
             console.log(check)
             
-            github.script.setEnv('check', check)
+            github.context['env']['skip-steps'] = 'true'
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
