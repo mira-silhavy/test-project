@@ -20,9 +20,7 @@ jobs:
                   repo: context.repo.repo,
                   check_run_id: check
                 });
-            
-            return check
-            
+                        
             console.log(check)
       - name: Checkout base branch
         uses: actions/checkout@v3
