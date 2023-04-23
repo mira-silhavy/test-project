@@ -52,15 +52,13 @@ jobs:
 
   call_workflow:
     strategy:
-      matrix:
-        run_id: [ ${ { env.run_id } } ]
+      matrix: ${{fromJSON(needs.job1.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
       run_id: ${{ matrix.run_id }}
 
   validate_on_pull_request_create:
     name: Validate Flyway Job PR
-    needs: call_workflow
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -78,9 +76,9 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            echo "run_id=${{ env.run_id }}" >> $GITHUB_ENV
+            echo "run_id={\"run_id\": [${{ env.run_id }}]" >> $GITHUB_ENV
             echo "${{ env.run_id }}"
-      - name: Call workflow
+    needs: call_workflow
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
