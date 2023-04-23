@@ -28,10 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     outputs:
-      matrix: ${{ steps.create-check.outputs.result }}
+      matrix: ${{ steps.create-pr-check.outputs.result }}
     steps:
-      - name: Create check
-        id: create-check
+      - name: Create check for PR
+        id: create-pr-check
         uses: actions/github-script@v6
         with:
           script: |
@@ -52,9 +52,11 @@ jobs:
     name: Validate Flyway Job PUSH
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    outputs:
+      matrix: ${{ steps.create-push-check.outputs.result }}
     steps:
-      - name: List PRs
-        id: prs
+      - name: Create check for PUSH
+        id: create-push-check
         uses: actions/github-script@v6
         with:
           script: |
