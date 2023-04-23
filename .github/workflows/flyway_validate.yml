@@ -1,13 +1,15 @@
 name: Validate Flyway Migration
 on:
   pull_request:
-    types: [ opened, synchronize, edited ]
+    types: [ opened, synchronize ]
   push:
     branches:
       - master
+      - release-*
 
 jobs:
   call_workflow_PR:
+    name: Workflow Call PR
     needs: validate_on_pull_request
     strategy:
       matrix: ${{fromJSON(needs.validate_on_pull_request.outputs.matrix)}}
@@ -16,6 +18,7 @@ jobs:
       target: ${{ matrix.check_id }}
 
   call_workflow_PUSH:
+    name: Workflow Call PR
     needs: validate_on_push
     strategy:
       matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
