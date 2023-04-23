@@ -69,7 +69,18 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            core.setOutput('check_id', response.data.id);
+            echo "run_id=${response.data.id}" >> $GITHUB_ENV
+            echo "${ env.run_id }"
+      - name: Call workflow
+        strategy:
+          fail-fast: false
+          matrix:
+            run_id: [ ${{ env.run_id }} ]
+        uses: ./.github/workflows/check_run.yml
+        with:
+          run_id: ${{ matrix.run_id }}
+
+
 
   validate_on_push_to_master:
     name: Validate Flyway Job PUSH
