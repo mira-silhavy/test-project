@@ -99,7 +99,7 @@ jobs:
                   continue;
                 }
             
-                const pr_sha = 'none';
+                var pr_sha = 'none';
                 for (const pr of check_bla.data.pull_requests) {
                   console.log(`PR: ${pr.number}`);
             
