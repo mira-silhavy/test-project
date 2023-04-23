@@ -53,10 +53,11 @@ jobs:
   call_workflow:
     needs: validate_on_pull_request_create
     strategy:
-      matrix: ${{needs.validate_on_pull_request_create.outputs.matrix}}
+      matrix:
+        target: ${{needs.validate_on_pull_request_create.outputs.matrix}}
     uses: ./.github/workflows/check_run.yml
     with:
-      target: ${{ matrix.run_id }}
+      target: ${{ matrix.target }}
 
   validate_on_pull_request_create:
     name: Validate Flyway Job PR
