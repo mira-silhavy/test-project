@@ -15,13 +15,17 @@ jobs:
           script: |
             console.log('${{ inputs.target }}')
             
+            const check_id = ${{ inputs.target }}
+            
             const check = await github.rest.checks.get({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  check_run_id: check
+                  check_run_id: check_id
                 });
                         
             console.log(check)
+            
+            return check
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
