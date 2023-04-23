@@ -51,7 +51,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log(context)
             // get PRs targeting pushed branch
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -100,8 +99,11 @@ jobs:
                   continue;
                 }
             
+                const pr_sha;
                 for (const pr of check_bla.data.pull_requests) {
                   console.log(`PR: ${pr.number}`);
+            
+                  pr_sha = pr.head.sha;
             
                   await github.rest.pulls.update({
                     owner: context.repo.owner,
@@ -117,7 +119,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   name: 'Flyway Validation Push Check',
-                  head_sha: context.payload.pull_request.head.sha,
+                  head_sha: pr_sha,
                   status: 'in_progress',
                   started_at: new Date().toISOString()
                 });
