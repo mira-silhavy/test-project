@@ -44,7 +44,7 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            const identifier = response.data.id + "-" + context.payload.pull_request.number;
+            const identifier = response.data.id + ":" + context.payload.pull_request.number;
             console.log(identifier);
             const json = { "check_id": [ identifier ] };
             console.log(json);
@@ -141,7 +141,7 @@ jobs:
             
                 console.log(response);
             
-                const identifier = response.data.id + "-" + pr_number;
+                const identifier = response.data.id + ":" + pr_number;
             
                 check_ids.push(identifier);
             

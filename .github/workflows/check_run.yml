@@ -15,14 +15,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            let input = ${{ inputs.target }}.valueOf()
-            console.log(input)
-            
-            let input = 
-            
             const input = ${{ inputs.target }}
-            
-            console.log(input)
+            const check_id = input.split(":")[0]
+            const pr_number = input.split(":")[1]
+            console.log(check_id)
+            console.log(pr_number)
                         
             const check = await github.rest.checks.get({
                   owner: context.repo.owner,
