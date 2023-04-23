@@ -26,8 +26,10 @@ jobs:
                 });
                         
             console.log(check)
-            console.log(check.pull_requests[0].base.ref)
-            console.log(check.pull_requests[0].number)
+            for pr in check.pull_requests {
+              console.log(pr.base.ref)
+              console.log(pr.number)
+            }
             
             return check
       - name: Checkout base branch
