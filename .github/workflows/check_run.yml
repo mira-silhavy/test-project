@@ -10,41 +10,32 @@ jobs:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
     steps:
-      - name: Get check
-        id: get-check
-        uses: actions/github-script@v6
-        with:
-          script: |
-            console.log(${{ inputs.target }})
-            
-            const input = ${{ inputs.target }}
-            
-            console.log(input)
-                        
-            const check = await github.rest.checks.get({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  check_run_id: check_id
-                });
-                        
-            console.log(check)
-            
-            return check
+      - name: Print Inputs
+        run: |
+          echo "Release Type: ${{ inputs.target }}"
+          INPUT_TARGET=${{ inputs.target }}
+          IFS=':' read -ra TARGET_ARR <<< "$INPUT_TARGET"
+          echo "Check: ${TARGET_ARR[0]}"
+          echo "PR: ${TARGET_ARR[1]}"
+          echo "Base: ${TARGET_ARR[2]}"
+          echo "check-id=${TARGET_ARR[0]}" >> $GITHUB_ENV
+          echo "pr-number=${TARGET_ARR[1]}" >> $GITHUB_ENV
+          echo "base-branch=${TARGET_ARR[2]}" >> $GITHUB_ENV
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ steps.get-check.outputs.result.pull_requests[0].base.ref }}
+          ref: ${{ env.base-branch }}
           fetch-depth: 1
       - name: Checkout PR branch
         uses: actions/checkout@v3
         with:
-          ref: refs/pull/${{ steps.get-check.outputs.result.pull_requests[0].number }}/merge
+          ref: refs/pull/${{ env.pr-number }}/merge
           fetch-depth: 1
       - name: Export new migrates
         id: export-new-migrates
         run: |
           echo "${{ steps.get-check.outputs.result }}"
-          git diff --name-only --diff-filter=A origin/${{ github.event.check_run.pull_requests[0].base.ref }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
+          git diff --name-only --diff-filter=A origin/${{ env.base-branch }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
           echo "Exported migrates"
       - name: Check migrates empty
         id: check-migrates-empty
@@ -70,15 +61,33 @@ jobs:
       - name: Run Java Validation
         if: env.skip-steps != 'true'
         run: java .github/java/FlywayValidation.java ${{ env.version }} new_migrates.txt
-      - name: Update check run status
+      - name: Update check run fail
+        if: ${{ steps.java.exitcode == 0 }}
         uses: actions/github-script@v6
         with:
           script: |
-            await github.checks.update({
+            await github.rest.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              check_run_id: ${{ inputs.target }},
+              check_run_id: ${{ env.check-id }},
+              conclusion: 'failure', // or 'failure' or 'neutral'
+              completed_at: new Date().toISOString(),
+              output: {
+                title: 'Check failed',
+                summary: 'The Java command exited with a non-zero code.'
+              }
+            });
+      - name: Update check run success
+        if: ${{ steps.java.exitcode != 0 }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              check_run_id: ${{ env.check-id }},
               conclusion: 'success', // or 'failure' or 'neutral'
+              completed_at: new Date().toISOString(),
               output: {
                 title: 'Check completed',
                 summary: 'All checks passed.'

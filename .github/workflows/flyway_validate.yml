@@ -44,7 +44,7 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            const identifier = response.data.id + "-" + context.payload.pull_request.number;
+            const identifier = response.data.id + ":" + context.payload.pull_request.number + ":" + context.payload.pull_request.base.ref;
             console.log(identifier);
             const json = { "check_id": [ identifier ] };
             console.log(json);
@@ -112,11 +112,13 @@ jobs:
             
                 var pr_sha = 'none';
                 var pr_number = 'none';
+                var pr_base = 'none';
                 for (const pr of check_bla.data.pull_requests) {
                   console.log(`PR: ${pr.number}`);
             
                   pr_sha = pr.head.sha;
                   pr_number = pr.number;
+                  pr_base = pr.base.ref;
             
                   await github.rest.pulls.update({
                     owner: context.repo.owner,
@@ -141,7 +143,7 @@ jobs:
             
                 console.log(response);
             
-                const identifier = response.data.id + "-" + pr_number;
+                const identifier = response.data.id + ":" + pr_number + ":" + pr_base;
             
                 check_ids.push(identifier);
             
