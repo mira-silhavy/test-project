@@ -9,7 +9,7 @@ public class V6_79_0_003__UNI_24307_Convert_ScheduledTransactionRunJob_job_to_jo
 
     @Override
     protected void doMigrate(@NotNull MigrationTemplate template) throws Exception {
-
+        T
     }
 
 }

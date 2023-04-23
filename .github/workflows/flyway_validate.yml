@@ -7,24 +7,31 @@ on:
       - master
 
 jobs:
-  call_workflow:
-    needs: validate_on_pull_request_create
+  call_workflow_PR:
+    needs: validate_on_pull_request
     strategy:
-      fail-fast: false
-      matrix: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.validate_on_pull_request.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
-      target: ${{ matrix.run_id }}
+      target: ${{ matrix.check_id }}
 
-  validate_on_pull_request_create:
+  call_workflow_PUSH:
+    needs: validate_on_push
+    strategy:
+      matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
+    uses: ./.github/workflows/check_run.yml
+    with:
+      target: ${{ matrix.check_id }}
+
+  validate_on_pull_request:
     name: Validate Flyway Job PR
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     outputs:
-      matrix: ${{ steps.create-check.outputs.result }}
+      matrix: ${{ steps.create-pr-check.outputs.result }}
     steps:
-      - name: Create check
-        id: create-check
+      - name: Create check for PR
+        id: create-pr-check
         uses: actions/github-script@v6
         with:
           script: |
@@ -37,21 +44,22 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            const json = { "run_id": [ response.data.id ] };
+            const json = { "check_id": [ response.data.id ] };
             console.log(json);
             return json;
 
-  validate_on_push_to_master:
+  validate_on_push:
     name: Validate Flyway Job PUSH
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    outputs:
+      matrix: ${{ steps.create-push-check.outputs.result }}
     steps:
-      - name: List PRs
-        id: prs
+      - name: Create check for PUSH
+        id: create-push-check
         uses: actions/github-script@v6
         with:
           script: |
-            console.log(context)
             // get PRs targeting pushed branch
             const PRs = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -61,7 +69,7 @@ jobs:
             });
             console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
             const SHAs = PRs.data.map(pr => pr.head.sha);
-            const run_ids = [];
+            const check_ids = [];
             for (const sha of SHAs) {
               console.log(`SHA: ${sha}`);
               console.log(`Context SHA: ${context.sha}`);
@@ -95,13 +103,16 @@ jobs:
                 });
             
                 console.log(`Check ${check} name: ${check_bla.data.name}`);
-                if (!check_bla.data.name.toLowerCase().includes('PR Check')) {
+                if (!check_bla.data.name.toLowerCase().includes('pr check')) {
                   console.log(`Check ${check} is not a Flyway check, skipping...`);
                   continue;
                 }
             
+                var pr_sha = 'none';
                 for (const pr of check_bla.data.pull_requests) {
                   console.log(`PR: ${pr.number}`);
+            
+                  pr_sha = pr.head.sha;
             
                   await github.rest.pulls.update({
                     owner: context.repo.owner,
@@ -111,22 +122,26 @@ jobs:
                   });
                 }
             
-                console.log(`Updating check ${check}...`);
+                console.log(`Creating check ${check}... with PR SHA ${pr_sha}`);
             
                 const response = await github.rest.checks.create({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   name: 'Flyway Validation Push Check',
-                  head_sha: context.payload.pull_request.head.sha,
+                  head_sha: pr_sha,
                   status: 'in_progress',
                   started_at: new Date().toISOString()
                 });
             
                 console.log(response);
             
-                run_ids.push(response.data.id);
+                check_ids.push(response.data.id);
             
               }            
             }
             
-            console.log(run_ids);
+            console.log(check_ids);
+            
+            const json = { "check_id": check_ids };
+            console.log(json);
+            return json;
