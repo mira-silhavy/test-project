@@ -132,13 +132,18 @@ jobs:
             
                 console.log(`Creating check ${check}... with PR SHA ${pr_sha}`);
             
+                const response1 = await github.rest.checks.rerequestRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  check_run_id: check,
+                });     
+                
                 const response = await github.rest.checks.update({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   check_run_id: check,
                   status: 'in_progress',
                   started_at: new Date().toISOString(),
-                  conclusion: null
                 });
             
                 console.log(response);
