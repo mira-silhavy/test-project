@@ -1,6 +1,6 @@
 name: Validate Flyway Migration Check
 on:
-  check_run
+  workflow_call
 jobs:
   build:
     name: Validate Flyway Migration Check
