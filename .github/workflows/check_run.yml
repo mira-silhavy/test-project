@@ -10,7 +10,9 @@ jobs:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - name: Get check
+        id: get-check
+        uses: actions/github-script@v6
         with:
           script: |
             console.log('${{ inputs.target }}')
@@ -25,7 +27,7 @@ jobs:
                         
             console.log(check)
             
-            return check
+            github.script.setEnv('check', check)
       - name: Checkout base branch
         uses: actions/checkout@v3
         with:
@@ -39,6 +41,7 @@ jobs:
       - name: Export new migrates
         id: export-new-migrates
         run: |
+          echo "${{ env.check }}"
           git diff --name-only --diff-filter=A origin/${{ github.event.check_run.pull_requests[0].base.ref }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
           echo "Exported migrates"
       - name: Check migrates empty
