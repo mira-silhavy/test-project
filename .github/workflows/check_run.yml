@@ -10,6 +10,9 @@ jobs:
     name: Validate Flyway Migration Check
     runs-on: ubuntu-latest
     steps:
+      - name: Print Inputs
+        run: |
+          echo "Release Type: ${{ inputs.target }}"
       - name: Get check
         id: get-check
         uses: actions/github-script@v6
