@@ -4,7 +4,7 @@ on:
     inputs:
       target:
         required: true
-        type: number
+        type: string
 jobs:
   build:
     name: Validate Flyway Migration Check
