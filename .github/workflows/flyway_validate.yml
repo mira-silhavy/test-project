@@ -69,12 +69,14 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
+            const json = { "run_id": response.data.id };
+            console.log(json);
+            console.log(fromJSON(response.data.id));
             return response.data.id;
       - name: Bla
         run: |
           echo "run_matrix={\"run_id\": [${{ steps.create-check.outputs.result }}]" >> $GITHUB_ENV
           echo "${{ env.run_matrix }}"
-          echo "${{fromJSON(env.run_matrix)}}"
     # needs: call_workflow
 
   validate_on_push_to_master:
