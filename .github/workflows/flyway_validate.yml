@@ -8,22 +8,22 @@ on:
 
 jobs:
   call_workflow_PR:
-    needs: validate_on_pull_request_create
+    needs: validate_on_pull_request
     strategy:
-      matrix: ${{fromJSON(needs.validate_on_pull_request_create.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.validate_on_pull_request.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
-      target: ${{ matrix.run_id }}
+      target: ${{ matrix.check_id }}
 
   call_workflow_PUSH:
-    needs: validate_on_push_to_master
+    needs: validate_on_push
     strategy:
       matrix: ${{fromJSON(needs.validate_on_push_to_master.outputs.matrix)}}
     uses: ./.github/workflows/check_run.yml
     with:
-      target: ${{ matrix.run_id }}
+      target: ${{ matrix.check_id }}
 
-  validate_on_pull_request_create:
+  validate_on_pull_request:
     name: Validate Flyway Job PR
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
@@ -44,11 +44,11 @@ jobs:
               started_at: new Date().toISOString()
             });
             console.log(response);
-            const json = { "run_id": [ response.data.id ] };
+            const json = { "check_id": [ response.data.id ] };
             console.log(json);
             return json;
 
-  validate_on_push_to_master:
+  validate_on_push:
     name: Validate Flyway Job PUSH
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -69,7 +69,7 @@ jobs:
             });
             console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
             const SHAs = PRs.data.map(pr => pr.head.sha);
-            const run_ids = [];
+            const check_ids = [];
             for (const sha of SHAs) {
               console.log(`SHA: ${sha}`);
               console.log(`Context SHA: ${context.sha}`);
@@ -135,13 +135,13 @@ jobs:
             
                 console.log(response);
             
-                run_ids.push(response.data.id);
+                check_ids.push(response.data.id);
             
               }            
             }
             
-            console.log(run_ids);
+            console.log(check_ids);
             
-            const json = { "run_ids": run_ids };
+            const json = { "check_id": check_ids };
             console.log(json);
             return json;
