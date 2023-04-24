@@ -5,6 +5,7 @@ on:
       target:
         required: true
         type: string
+
 jobs:
   build:
     name: Validate Flyway Migration Check
