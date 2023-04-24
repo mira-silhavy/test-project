@@ -72,7 +72,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               check_run_id: ${{ env.check-id }},
-              conclusion: 'failure', // or 'failure' or 'neutral'
+              conclusion: 'failure',
               completed_at: new Date().toISOString(),
               output: {
                 title: 'Check failed',
@@ -88,7 +88,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               check_run_id: ${{ env.check-id }},
-              conclusion: 'success', // or 'failure' or 'neutral'
+              conclusion: 'success',
               completed_at: new Date().toISOString(),
               output: {
                 title: 'Check completed',
