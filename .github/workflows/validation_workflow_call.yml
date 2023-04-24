@@ -69,6 +69,7 @@ jobs:
         with:
           script: |
             const errorSummary = ${{ steps.run-java.outputs.message }}
+            console.log(errorSummary);
             await github.rest.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
