@@ -1,4 +1,4 @@
-package main.java.db.v6_79_0.all;
+package main.java.db.v6_80_0.all;
 
 import com.unimarket.flyway.AbstractMigration;
 import com.unimarket.flyway.MigrationTemplate;
