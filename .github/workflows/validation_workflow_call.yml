@@ -68,7 +68,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const errorSummary = ${{ steps.run-java.outputs.message }}
+            const errorSummary = ${{ steps.run-java.outputs.message }};
             const sum = errorSummary.toString();
             console.log(sum);
             await github.rest.checks.update({
