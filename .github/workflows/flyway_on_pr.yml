@@ -9,7 +9,7 @@ jobs:
     needs: validate_on_pull_request
     strategy:
       matrix: ${{fromJSON(needs.validate_on_pull_request.outputs.matrix)}}
-    uses: ./.github/workflows/check_run.yml
+    uses: ./.github/workflows/validation_workflow_call.yml
     with:
       target: ${{ matrix.check_id }}
 
