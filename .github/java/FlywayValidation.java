@@ -222,11 +222,12 @@ class FlywayValidation {
 
     private static void setGithubActionProperty(String result) throws IOException, InterruptedException {
         Process process = new ProcessBuilder("sh", "-c", "echo \"Flyway validation results:\" >> $GITHUB_STEP_SUMMARY").start();
-        Process process2 = new ProcessBuilder("sh", "-c", "echo \"" + result + "\" >> $GITHUB_STEP_SUMMARY").start();
+        new ProcessBuilder("sh", "-c", "echo \"" + result + "\" >> $GITHUB_STEP_SUMMARY").start();
+        new ProcessBuilder("sh", "-c", "echo \"message=" + result + "\" >> $GITHUB_OUTPUT").start();
         int exitCode = process.waitFor();
         if (exitCode != 0) {
             LOG.severe("Exited with error code " + exitCode);
-            Scanner scanner = new Scanner(new SequenceInputStream(process.getErrorStream(), process2.getErrorStream()));
+            Scanner scanner = new Scanner(process.getErrorStream());
             while (scanner.hasNextLine()) {
                 LOG.severe(scanner.nextLine());
             }
