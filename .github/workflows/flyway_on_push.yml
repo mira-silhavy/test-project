@@ -10,6 +10,7 @@ jobs:
     name: Workflow Call PR
     needs: validate_on_push
     strategy:
+      fail-fast: false
       matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
     uses: ./.github/workflows/validation_workflow_call.yml
     with:
