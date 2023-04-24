@@ -1,0 +1,41 @@
+name: Validate Flyway Migration
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+jobs:
+  call_workflow_PR:
+    name: Workflow Call PR
+    needs: validate_on_pull_request
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJSON(needs.validate_on_pull_request.outputs.matrix)}}
+    uses: ./.github/workflows/validation_workflow_call.yml
+    with:
+      target: ${{ matrix.check_id }}
+
+  validate_on_pull_request:
+    name: Validate Flyway Job PR
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.create-pr-check.outputs.result }}
+    steps:
+      - name: Create check for PR
+        id: create-pr-check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Flyway Validation PR Check',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'in_progress',
+              started_at: new Date().toISOString()
+            });
+            console.log(response);
+            const identifier = response.data.id + ":" + context.payload.pull_request.number + ":" + context.payload.pull_request.base.ref;
+            console.log(identifier);
+            const json = { "check_id": [ identifier ] };
+            console.log(json);
+            return json;
