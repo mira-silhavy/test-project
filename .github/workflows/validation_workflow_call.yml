@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Print Inputs
         run: |
-          echo "Release Type: ${{ inputs.target }}"
+          echo "Workflow input: ${{ inputs.target }}"
           INPUT_TARGET=${{ inputs.target }}
           IFS=':' read -ra TARGET_ARR <<< "$INPUT_TARGET"
           echo "Check: ${TARGET_ARR[0]}"
@@ -35,9 +35,9 @@ jobs:
       - name: Export new migrates
         id: export-new-migrates
         run: |
-          echo "${{ steps.get-check.outputs.result }}"
           git diff --name-only --diff-filter=A origin/${{ env.base-branch }} HEAD | grep -E 'java/db/' > new_migrates.txt || true
           echo "Exported migrates"
+          cat new_migrates.txt
       - name: Check migrates empty
         id: check-migrates-empty
         run: |
@@ -76,7 +76,7 @@ jobs:
               completed_at: new Date().toISOString(),
               output: {
                 title: 'Check failed',
-                summary: 'The Java command exited with a non-zero code.'
+                summary: ${{ steps.run-java.outputs.result }}
               }
             });
       - name: Update check run success
