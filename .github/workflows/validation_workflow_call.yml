@@ -78,7 +78,7 @@ jobs:
               completed_at: new Date().toISOString(),
               output: {
                 title: 'Check failed',
-                summary: 'kkk'
+                summary: errorSummary
               }
             });
       - name: Update check run success
