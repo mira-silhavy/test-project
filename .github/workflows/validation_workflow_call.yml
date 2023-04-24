@@ -76,7 +76,7 @@ jobs:
               completed_at: new Date().toISOString(),
               output: {
                 title: 'Check failed',
-                summary: ${{ steps.run-java.outputs.result }}
+                summary: ${{ steps.run-java.outputs.message }}
               }
             });
       - name: Update check run success
