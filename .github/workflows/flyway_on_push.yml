@@ -9,6 +9,7 @@ jobs:
   call_workflow_PUSH:
     name: PUSH Workflow Call
     needs: main_PUSH_job
+    if: ${{ needs.main_PUSH_job.outputs.matrix != '' && toJson(fromJson(needs.main_PUSH_job.outputs.matrix).check_id) != '[]' }}
     strategy:
       fail-fast: false
       matrix: ${{fromJSON(needs.main_PUSH_job.outputs.matrix)}}
@@ -39,11 +40,18 @@ jobs:
             
             const check_ids = [];
             for (const pr of pr_list.data) {
+              console.log(`PR branch name: ${pr.head.ref}`);
               console.log(`PR SHA: ${pr.head.sha}`);
               console.log(`Context SHA: ${context.sha}`);
             
               if (pr.head.sha == context.sha) {
                 console.log(`PR SHA ${pr.head.sha} is the same as the one that triggered the workflow, skipping...`);
+                continue;
+              }
+            
+              // only run on PRs that start with feature-
+              if (!pr.head.ref.startsWith('MIRA-')) {
+                console.log('PR branch name does not start with MIRA-, skipping...');
                 continue;
               }
             
