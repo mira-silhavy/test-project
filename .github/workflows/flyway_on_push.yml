@@ -36,7 +36,7 @@ jobs:
             });
             console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
             const check_ids = [];
-            for (const pr of PRs) {
+            for (const pr of PRs.data) {
               console.log(`SHA: ${pr.head.sha}`);
               console.log(`Context SHA: ${context.sha}`);
             
