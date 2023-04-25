@@ -9,7 +9,7 @@ jobs:
   call_workflow_PUSH:
     name: PUSH Workflow Call
     needs: main_PUSH_job
-    if: ${{ toJson(fromJson(needs.main_PUSH_job.outputs.matrix)) != '[]' && needs.main_PUSH_job.outputs.matrix != '' }}
+    if: ${{ needs.main_PUSH_job.outputs.matrix != '' && toJson(fromJson(needs.main_PUSH_job.outputs.matrix).check_id) != '[]' }}
     strategy:
       fail-fast: false
       matrix: ${{fromJSON(needs.main_PUSH_job.outputs.matrix)}}
