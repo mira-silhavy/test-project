@@ -9,11 +9,10 @@ jobs:
   call_workflow_PUSH:
     name: PUSH Workflow Call
     needs: main_PUSH_job
-    if: ${{ needs.main_PUSH_job.outputs.matrix != '' && toJson(fromJson(needs.main_PUSH_job.outputs.matrix)) != '[]'}}
+    if: ${{ needs.main_PUSH_job.outputs.matrix != '' && toJson(fromJson(needs.main_PUSH_job.outputs.matrix).check_id) != '[]' }}
     strategy:
       fail-fast: false
-      matrix:
-        check_id: ${{fromJSON(needs.main_PUSH_job.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.main_PUSH_job.outputs.matrix)}}
     uses: ./.github/workflows/validation_workflow_call.yml
     with:
       target: ${{ matrix.check_id }}
@@ -70,9 +69,6 @@ jobs:
               check_ids.push(identifier);
             }
             
-            const json = { check_ids };
-            const json2 = { "check_id": check_ids };
-
+            const json = { "check_id": check_ids };
             console.log(json);
-            console.log(json2);
             return json;
