@@ -40,6 +40,7 @@ jobs:
             
             const check_ids = [];
             for (const pr of pr_list.data) {
+              console.log(`PR branch name: ${pr.head.ref}`);
               console.log(`PR SHA: ${pr.head.sha}`);
               console.log(`Context SHA: ${context.sha}`);
             
@@ -48,10 +49,9 @@ jobs:
                 continue;
               }
             
-              console.log('PR branch name: ' + pr.head.ref);
-            
+              // only run on PRs that start with feature-
               if (!pr.head.ref.startsWith('MIRA-')) {
-                console.log('PR branch name does not start with feature-, skipping...');
+                console.log('PR branch name does not start with MIRA-, skipping...');
                 continue;
               }
             
