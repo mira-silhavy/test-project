@@ -1,4 +1,4 @@
-name: Validate Flyway Migration
+name: Validate Flyway
 on:
   push:
     branches:
@@ -7,17 +7,17 @@ on:
 
 jobs:
   call_workflow_PUSH:
-    name: Workflow Call PR
-    needs: validate_on_push
+    name: PUSH Workflow Call
+    needs: main_PUSH_job
     strategy:
       fail-fast: false
-      matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.main_PUSH_job.outputs.matrix)}}
     uses: ./.github/workflows/validation_workflow_call.yml
     with:
       target: ${{ matrix.check_id }}
 
-  validate_on_push:
-    name: Validate Flyway Job PUSH
+  main_PUSH_job:
+    name: PUSH Job
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.create-push-check.outputs.result }}
@@ -28,87 +28,38 @@ jobs:
         with:
           script: |
             // get PRs targeting pushed branch
-            const PRs = await github.rest.pulls.list({
+            const pr_list = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               base: context.ref,
               state: 'open'
             });
-            console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
-            const SHAs = PRs.data.map(pr => pr.head.sha);
+            
+            console.log(`Found ${pr_list.data.length} open PRs targeting ${ context.ref }.`);
+            
             const check_ids = [];
-            for (const sha of SHAs) {
-              console.log(`SHA: ${sha}`);
+            for (const pr of pr_list.data) {
+              console.log(`PR SHA: ${pr.head.sha}`);
               console.log(`Context SHA: ${context.sha}`);
             
-              if (sha == context.sha) {
-                console.log(`SHA ${sha} is the same as the one that triggered the workflow, skipping...`);
+              if (pr.head.sha == context.sha) {
+                console.log(`PR SHA ${pr.head.sha} is the same as the one that triggered the workflow, skipping...`);
                 continue;
               }
             
-              const response = await github.rest.checks.listForRef({
+              // create/overwrite existing check
+              const response = await github.rest.checks.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: sha
+                name: 'Flyway Validation PR Check',
+                head_sha: pr.head.sha,
+                status: 'in_progress',
+                started_at: new Date().toISOString()
               });
             
-              if (response.data.total_count == 0) {
-                console.log(`No checks found for ${sha}, skipping...`);
-                continue;
-              }
-            
-              const checks = response.data.check_runs;
-              console.log(`Found ${checks.length} checks.`);
-              const checkIDs = response.data.check_runs.map(check => check.id);
-              console.log('Check IDs: ' + checkIDs.join(', '));
-            
-              for (const check of checkIDs) {
-                const check_bla = await github.rest.checks.get({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  check_run_id: check
-                });
-            
-                console.log(`Check ${check} name: ${check_bla.data.name}`);
-                if (!check_bla.data.name.toLowerCase().includes('pr check')) {
-                  console.log(`Check ${check} is not a Flyway check, skipping...`);
-                  continue;
-                }
-            
-                var pr_sha = 'none';
-                var pr_number = 'none';
-                var pr_base = 'none';
-                for (const pr of check_bla.data.pull_requests) {
-                  console.log(`PR: ${pr.number}`);
-            
-                  pr_sha = pr.head.sha;
-                  pr_number = pr.number;
-                  pr_base = pr.base.ref;
-                  
-                  break;
-                }
-            
-                console.log(`Creating check ${check}... with PR SHA ${pr_sha}`);
-            
-                const response = await github.rest.checks.create({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  name: 'Flyway Validation PR Check',
-                  head_sha: pr_sha,
-                  status: 'in_progress',
-                  started_at: new Date().toISOString()
-                });
-            
-                console.log(response);
-            
-                const identifier = response.data.id + ":" + pr_number + ":" + pr_base;
-            
-                check_ids.push(identifier);
-            
-              }            
+              const identifier = response.data.id + ":" + pr.number + ":" + pr.base.ref;
+              check_ids.push(identifier);
             }
-            
-            console.log(check_ids);
             
             const json = { "check_id": check_ids };
             console.log(json);
