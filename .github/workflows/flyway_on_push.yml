@@ -50,7 +50,7 @@ jobs:
             
               console.log('PR branch name: ' + pr.head.ref);
             
-              if (!pr.head.ref.startsWith('feature-')) {
+              if (!pr.head.ref.startsWith('MIRA-')) {
                 console.log('PR branch name does not start with feature-, skipping...');
                 continue;
               }
