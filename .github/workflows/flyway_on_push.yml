@@ -47,6 +47,13 @@ jobs:
                 continue;
               }
             
+              console.log('PR branch name: ' + pr.head.ref);
+            
+              if (!pr.head.ref.startsWith('feature-')) {
+                console.log('PR branch name does not start with feature-, skipping...');
+                continue;
+              }
+            
               // create/overwrite existing check
               const response = await github.rest.checks.create({
                 owner: context.repo.owner,
