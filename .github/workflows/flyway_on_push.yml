@@ -1,0 +1,67 @@
+name: Validate Flyway Migration
+on:
+  push:
+    branches:
+      - master
+      - release-*
+
+jobs:
+  call_workflow_PUSH:
+    name: Workflow Call PR
+    needs: validate_on_push
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
+    uses: ./.github/workflows/validation_workflow_call.yml
+    with:
+      target: ${{ matrix.check_id }}
+
+  validate_on_push:
+    name: Validate Flyway Job PUSH
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.create-push-check.outputs.result }}
+    steps:
+      - name: Create check for PUSH
+        id: create-push-check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // get PRs targeting pushed branch
+            const PRs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: context.ref,
+              state: 'open'
+            });
+            console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
+            const check_ids = [];
+            for (const pr of PRs.data) {
+              console.log(`SHA: ${pr.head.sha}`);
+              console.log(`Context SHA: ${context.sha}`);
+            
+              if (pr.head.sha == context.sha) {
+                console.log(`SHA ${pr.head.sha} is the same as the one that triggered the workflow, skipping...`);
+                continue;
+              }
+            
+              const response = await github.rest.checks.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'Flyway Validation PR Check',
+                head_sha: pr.head.sha,
+                status: 'in_progress',
+                started_at: new Date().toISOString()
+              });
+            
+              console.log(response);
+            
+              const identifier = response.data.id + ":" + pr.number + ":" + pr.base.ref;
+              check_ids.push(identifier);
+            }
+            
+            console.log(check_ids);
+            
+            const json = { "check_id": check_ids };
+            console.log(json);
+            return json;
