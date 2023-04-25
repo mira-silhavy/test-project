@@ -72,4 +72,5 @@ jobs:
             
             const json = { check_ids };
             console.log(json);
+            console.log(json);
             return json;
