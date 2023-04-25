@@ -71,6 +71,8 @@ jobs:
             }
             
             const json = { check_ids };
+            const json2 = { "check_id": check_ids };
+
             console.log(json);
-            console.log(json);
+            console.log(json2);
             return json;
