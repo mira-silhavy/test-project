@@ -1,4 +1,4 @@
-name: Validate Flyway Migration Check
+name: Validate Flyway
 on:
   workflow_call:
     inputs:
@@ -7,8 +7,8 @@ on:
         type: string
 
 jobs:
-  build:
-    name: Validate Flyway Migration Check
+  java_validation:
+    name: Java Validation Job
     runs-on: ubuntu-latest
     steps:
       - name: Print Inputs

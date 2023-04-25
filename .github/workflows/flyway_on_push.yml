@@ -1,4 +1,4 @@
-name: Validate Flyway Migration
+name: Validate Flyway
 on:
   push:
     branches:
@@ -7,17 +7,17 @@ on:
 
 jobs:
   call_workflow_PUSH:
-    name: Workflow Call PR
-    needs: validate_on_push
+    name: PUSH Workflow Call
+    needs: main_PUSH_job
     strategy:
       fail-fast: false
-      matrix: ${{fromJSON(needs.validate_on_push.outputs.matrix)}}
+      matrix: ${{fromJSON(needs.main_PUSH_job.outputs.matrix)}}
     uses: ./.github/workflows/validation_workflow_call.yml
     with:
       target: ${{ matrix.check_id }}
 
-  validate_on_push:
-    name: Validate Flyway Job PUSH
+  main_PUSH_job:
+    name: PUSH Job
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.create-push-check.outputs.result }}
@@ -28,23 +28,26 @@ jobs:
         with:
           script: |
             // get PRs targeting pushed branch
-            const PRs = await github.rest.pulls.list({
+            const pr_list = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               base: context.ref,
               state: 'open'
             });
-            console.log(`Found ${PRs.data.length} open PRs targeting ${ context.ref }.`);
+            
+            console.log(`Found ${pr_list.data.length} open PRs targeting ${ context.ref }.`);
+            
             const check_ids = [];
-            for (const pr of PRs.data) {
-              console.log(`SHA: ${pr.head.sha}`);
+            for (const pr of pr_list.data) {
+              console.log(`PR SHA: ${pr.head.sha}`);
               console.log(`Context SHA: ${context.sha}`);
             
               if (pr.head.sha == context.sha) {
-                console.log(`SHA ${pr.head.sha} is the same as the one that triggered the workflow, skipping...`);
+                console.log(`PR SHA ${pr.head.sha} is the same as the one that triggered the workflow, skipping...`);
                 continue;
               }
             
+              // create/overwrite existing check
               const response = await github.rest.checks.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -54,13 +57,9 @@ jobs:
                 started_at: new Date().toISOString()
               });
             
-              console.log(response);
-            
               const identifier = response.data.id + ":" + pr.number + ":" + pr.base.ref;
               check_ids.push(identifier);
             }
-            
-            console.log(check_ids);
             
             const json = { "check_id": check_ids };
             console.log(json);
